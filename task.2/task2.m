@@ -8,25 +8,25 @@ img_noise_salt_ = my_Gauss_filter(img_noise_salt);
 subplot(2, 2, 1);
 imshow(img_noise_mean);
 SNR = my_SNR(img,img_noise_mean);
-title(sprintf('高斯噪声: %.3f', SNR));
+title(sprintf('信噪比: %.3f', SNR));
 subplot(2, 2, 2);
 imshow(img_noise_salt);
 SNR = my_SNR(img,img_noise_salt);
-title(sprintf('椒盐噪声: %.3f', SNR));
+title(sprintf('信噪比: %.3f', SNR));
 subplot(2, 2, 3);
 imshow(img_noise_mean_);
 SNR = my_SNR(img,img_noise_mean_);
-title(sprintf('滤波后: %.3f', SNR));
+title(sprintf('信噪比: %.3f', SNR));
 subplot(2, 2, 4);
 imshow(img_noise_salt_);
 SNR = my_SNR(img,img_noise_salt_);
-title(sprintf('滤波后: %.3f', SNR));
+title(sprintf('信噪比: %.3f', SNR));
 
 
 function output_img = my_Gauss_filter(noisy_image)
     [height, width, ~] = size(noisy_image);
     kernel_size = 9;
-    kernel = fspecial('gaussian',[kernel_size,kernel_size]);
+    kernel = fspecial('gaussian',[kernel_size,kernel_size],10);
     padding = 4;
     stride = 1;
     output_img = zeros(height, width);

@@ -1,0 +1,31 @@
+bw = imread('img.jpg'); %读图片
+bw = imresize(bw,[1024, 1024]); %调大小
+bw = rgb2gray(bw); %RGB to 灰度
+% Harris Corner detector 
+sigma=2; thresh=0.1; sze=11; disp=0;k = 0.04; %参数定义
+% Derivative masks
+dy = [-1 0 1; -1 0 1; -1 0 1]; %定义边缘检测核
+dx = dy'; %dx is the transpose matrix of dy
+
+Ix = conv2(bw, dx, 'same');%计算x方向梯度
+Iy = conv2(bw, dy, 'same');%计算y方向梯度
+
+% Calculating the gradient of the image Ix and Iy
+g = fspecial('gaussian',max(1,fix(6*sigma)), sigma);%高斯核定义
+Ix2 = conv2(Ix.^2, g, 'same'); % 平滑图像梯度x方向
+Iy2 = conv2(Iy.^2, g, 'same'); % 平滑图像梯度y方向
+Ixy = conv2(Ix.*Iy, g, 'same');% 平滑图像梯度xy方向
+
+% Compute the cornerness. 
+R = (Ix2 .* Iy2 - Ixy.^2) - k * (Ix2 + Iy2).^2; %计算每个像素的
+
+% Now we need to perform non-maximum suppression and threshold
+R_thresh = R > thresh * max(R(:));  
+cornerness = imregionalmax(R) & R_thresh; 
+
+[rws,cols] = find(cornerness); % Find row,colcoords.  clf ;
+imshow(bw);
+hold on;
+p=[cols rws];
+plot(p(:,1),p(:,2),'or');
+title('\bf Harris Corners')
