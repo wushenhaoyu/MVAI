@@ -1,0 +1,22 @@
+im = imread('stereo2012a.jpg');
+C = calibrate(im,,uv);
+function C = calibrate(im, XYZ, uv)
+    A = computeA(XYZ, uv);
+    b = uv(:);
+    q = A \ b;
+    C = reshape(q, 3, 4)';
+end
+
+function A = computeA(world_coords, image_coords)
+    [N, ~] = size(world_coords);
+    A = zeros(2 * N, 11);
+    for i = 1:N
+        X = world_coords(i, 1);
+        Y = world_coords(i, 2);
+        Z = world_coords(i, 3);
+        u = image_coords(i, 1);
+        v = image_coords(i, 2);
+        A(2 * i - 1, :) = [X, Y, Z, 1, 0, 0, 0, 0, -u * X, -u * Y, -u * Z];
+        A(2 * i, :) = [0, 0, 0, 0, X, Y, Z, 1, -v * X, -v * Y, -v * Z];
+    end
+end
